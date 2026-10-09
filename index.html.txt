@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173d32">
+<link rel="manifest" href="manifest.json">
+<title>My 10-Week Wellbeing</title>
+<style>
+:root{--green:#173d32;--pale:#e8f2eb;--bg:#f5f7f5;--muted:#64746b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#20332a;font:16px system-ui,sans-serif}
+header{background:var(--green);color:white;padding:24px 18px 20px}
+header h1{margin:0 0 5px;font-size:25px}
+header p{margin:0;color:#d3e6d9}
+main{max-width:720px;margin:auto;padding:16px 14px 90px}
+nav{display:flex;gap:8px;overflow-x:auto;padding:12px 0}
+nav button{white-space:nowrap;border:0;border-radius:22px;padding:10px 15px;background:#e4eae5;color:#244234}
+nav button.active{background:var(--green);color:white}
+.card{background:white;border-radius:16px;padding:17px;margin:12px 0;box-shadow:0 2px 9px #172b1910}
+h2{font-size:20px;margin:0 0 12px}
+h3{font-size:16px;margin:15px 0 8px}
+p{line-height:1.5}
+.muted{color:var(--muted);font-size:14px}
+.item{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-bottom:1px solid #edf0ed}
+.item:last-child{border:0}
+input[type=checkbox]{width:20px;height:20px;accent-color:#28744c;flex-shrink:0;margin-top:2px}
+.item label{flex:1;line-height:1.4}
+.done{color:var(--muted);text-decoration:line-through}
+button,.action{cursor:pointer}
+.primary{background:var(--green);color:white;border:0;border-radius:10px;padding:12px 15px}
+.secondary{background:var(--pale);color:var(--green);border:0;border-radius:10px;padding:10px 12px}
+input[type=number],input[type=date],textarea{font:inherit;border:1px solid #cbd7ce;border-radius:9px;padding:10px;max-width:100%}
+input[type=number]{width:120px}
+textarea{width:100%;min-height:75px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.progress{height:8px;background:#e5ebe6;border-radius:8px;overflow:hidden}
+.progress div{height:100%;background:#3c8b5b;width:0}
+.badge{display:inline-block;background:var(--pale);padding:5px 9px;border-radius:15px;font-size:12px}
+.warning{border-left:4px solid #b76b17}
+.hidden{display:none!important}
+a{color:#245c42}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:16px}
+</style>
+</head>
+<body>
+<header>
+  <p>YOUR PERSONAL HEALTH JOURNEY</p>
+  <h1>My 10-Week Wellbeing</h1>
+  <p id="dayLabel">Day 1 of 70</p>
+</header>
+<main>
+<nav id="nav">
+<button class="active" data-tab="today">Today</button>
+<button data-tab="health">Health modules</button>
+<button data-tab="meals">Meals</button>
+<button data-tab="shopping">Shopping</button>
+<button data-tab="progress">Progress</button>
+</nav>
+
+<section id="today" class="page">
+<div class="card warning">
+<h2>Health priorities</h2>
+<p>If you have not already done so, arrange a prompt GP assessment for food sticking when swallowing. Also discuss suspected sleep apnoea. If food is stuck and you cannot swallow saliva, or you have breathing difficulty, seek emergency care.</p>
+</div>
+<div class="card">
+<h2>Today's checklist</h2>
+<p class="muted">Tick off what you complete. Your progress saves in this browser.</p>
+<div class="progress"><div id="bar"></div></div>
+<p id="count" class="muted">0 of 6 completed</p>
+<div id="daily"></div>
+</div>
+<div class="card">
+<h2>Quick check-in</h2>
+<label for="mood">Energy today (1–5)</label><br>
+<input id="mood" type="number" min="1" max="5" placeholder="1–5"><br><br>
+<label for="pain">Overall pain today (0–10)</label><br>
+<input id="pain" type="number" min="0" max="10" placeholder="0–10"><br><br>
+<label for="notes">Notes for yourself</label>
+<textarea id="notes" placeholder="Symptoms, wins or questions for your GP..."></textarea>
+<button class="primary" id="saveCheckin">Save check-in</button>
+</div>
+</section>
+
+<section id="health" class="page hidden">
+<div class="card">
+<h2>Your individual health checklists</h2>
+<p class="muted">These are tracking prompts, not diagnoses or a substitute for clinician-directed treatment.</p>
+<div id="modules"></div>
+</div>
+</section>
+
+<section id="meals" class="page hidden">
+<div class="card">
+<h2>Week 1 meal plan</h2>
+<p class="muted">Starter menu for one adult. Adapt portions with a dietitian. Because you have swallowing difficulty, only eat textures you can swallow comfortably; arrange medical assessment before starting a restrictive diet.</p>
+<div id="menu"></div>
+</div>
+<div class="card">
+<h2>Meal-prep reminders</h2>
+<div id="prep"></div>
+</div>
+</section>
+
+<section id="shopping" class="page hidden">
+<div class="card">
+<h2>Weekly shopping list</h2>
+<p class="muted">Starter quantities for one person. Check tolerances, product labels and suitable serving sizes with your dietitian.</p>
+<div id="shop"></div>
+<button class="secondary" id="resetShop">Reset shopping ticks</button>
+</div>
+</section>
+
+<section id="progress" class="page hidden">
+<div class="card">
+<h2>Your 10-week progress</h2>
+<p>Starting weight: 105 kg · Longer-term target: 90 kg</p>
+<label for="week">Current week (1–10)</label><br>
+<input id="week" type="number" min="1" max="10" value="1">
+<p class="muted">Your target is a direction, not a deadline. Do not force rapid weight loss.</p>
+</div>
+<div class="card">
+<h2>Weight log</h2>
+<div class="row">
+<input id="weight" type="number" min="1" max="400" step=".1" placeholder="Weight in kg">
+<button class="primary" id="logWeight">Record weight</button>
+</div>
+<div id="weights"></div>
+</div>
+<div class="card">
+<h2>Backup your data</h2>
+<p class="muted">Export a backup regularly. Data is stored locally in this browser and does not automatically sync to another device.</p>
+<div class="row">
+<button class="primary" id="export">Export backup</button>
+<button class="secondary" id="importBtn">Import backup</button>
+<input id="importFile" type="file" accept=".json,application/json" class="hidden">
+</div>
+<button class="secondary" id="resetAll" style="margin-top:12px">Reset all app data</button>
+</div>
+</section>
+<footer>Personal tracking tool · Not a medical device · Keep backups secure</footer>
+</main>
+<script>
+const KEY="my10weekWellbeing.v1";
+const dailyTasks=[
+"Check today's health and appointment priorities",
+"Follow my agreed meal plan, using only safely tolerated textures",
+"Record caffeine intake",
+"Complete only clinician-approved movement or rehabilitation",
+"Complete prescribed foot-care or other treatment routine",
+"Complete evening sleep and symptom check-in"
+];
+const modules=[
+["Swallowing","Arrange GP assessment; record food-sticking episodes and follow-up."],
+["Sleep apnoea","Arrange assessment; record sleep concerns and clinician advice."],
+["Right groin / adductor","Record pain and activity tolerance; follow assessed restrictions."],
+["Left shoulder","Record instability; use only approved rehabilitation exercises."],
+["Possible abdominal separation","Arrange assessment before loading the abdominal wall."],
+["Abdominal weakness","Record approved rehabilitation and tolerance."],
+["Chronic joint pain","Record affected joints, stiffness and changes."],
+["Athlete's foot","Record treatment adherence, skin condition and response."],
+["Acid reflux","Record heartburn, meal timing and possible personal triggers."],
+["Caffeine dependence","Log each drink, amount and time; reduce gradually if appropriate."],
+["Weight and nutrition","Review weekly weight trend, meal routine and dietitian guidance."]
+];
+const meals=[
+["Monday","Oats, lactose-free milk and kiwi","Chicken, rice, carrots and zucchini","Baked salmon, potato and green beans","Mandarin; lactose-free yoghurt"],
+["Tuesday","Eggs and spinach","Leftover chicken and rice","Lean beef mince, rice and cooked vegetables","Kiwi; lactose-free yoghurt"],
+["Wednesday","Overnight oats and strawberries","Beef and rice bowl","Herb chicken, potato and green beans","Boiled eggs; tolerated fruit"],
+["Thursday","Eggs and spinach","Chicken and potato bowl","Ginger chicken and rice","Kiwi; lactose-free yoghurt"],
+["Friday","Oats and lactose-free yoghurt","Chicken and rice","Lean beef, potato and carrots","Boiled eggs; strawberries"],
+["Saturday","Eggs and oats","Leftover beef and rice","White fish, rice and cooked vegetables","Kiwi; lactose-free yoghurt"],
+["Sunday","Oats, yoghurt and kiwi","Chicken, rice and cooked vegetables","Lean beef patties, mash and green beans","Strawberries; boiled eggs"]
+];
+const shopping={
+"Protein":["Chicken, skinless — 1.2 kg","Salmon — 2 fillets","White fish — 2 fillets","Lean beef mince — 500 g","Lean beef steak or patties — 500 g","Eggs — 12","Plain lactose-free Greek yoghurt — 1 kg"],
+"Carbohydrates":["Rolled oats — 500 g","Rice — 750 g dry","Potatoes — 2 kg","Plain rice cakes, if tolerated — 1 packet"],
+"Vegetables":["Carrots — 1 kg","Zucchini — 5 medium","Green beans — 500 g","Baby spinach — 200 g"],
+"Fruit":["Kiwi — 7","Mandarins — 4","Strawberries — 250 g","Oranges, optional if tolerated — 2"],
+"Pantry":["Lactose-free milk — 2 L","Olive oil","Garlic-infused oil, optional","Fresh ginger","Parsley or chives","Mild herbs"]
+};
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){state={}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){alert("Could not save. Please export a backup and check browser storage.")}}
+function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function today(){state.days=state.days||{};state.days[dateKey()]=state.days[dateKey()]||{};return state.days[dateKey()]}
+function checkboxRow(text,checked,onchange){
+const row=document.createElement("div");row.className="item";
+const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!checked;
+const label=document.createElement("label");label.textContent=text;if(checked)label.className="done";
+cb.onchange=()=>{label.className=cb.checked?"done":"";onchange(cb.checked)};
+row.append(cb,label);return row;
+}
+function renderDaily(){
+const root=document.getElementById("daily");root.innerHTML="";
+const t=today();
+dailyTasks.forEach((x,i)=>root.append(checkboxRow(x,t["task"+i],v=>{t["task"+i]=v;persist();renderDaily()})));
+const done=dailyTasks.filter((x,i)=>t["task"+i]).length;
+document.getElementById("bar").style.width=(done/dailyTasks.length*100)+"%";
+document.getElementById("count").textContent=done+" of "+dailyTasks.length+" completed";
+const start=state.startDate||dateKey();
+const diff=Math.max(0,Math.floor((new Date(dateKey()+"T12:00:00")-new Date(start+"T12:00:00"))/86400000));
+document.getElementById("dayLabel").textContent="Day "+Math.min(70,diff+1)+" of 70";
+}
+function renderModules(){
+const root=document.getElementById("modules");root.innerHTML="";
+modules.forEach((m,i)=>{
+const box=document.createElement("div");box.className="card";
+const h=document.createElement("h3");h.textContent=(i+1)+". "+m[0];
+const p=document.createElement("p");p.className="muted";p.textContent=m[1];
+const key="module"+i;
+box.append(h,p,checkboxRow("Follow-up / task completed today",today()[key],v=>{today()[key]=v;persist()}));
+root.append(box);
+});
+}
+function renderMeals(){
+const root=document.getElementById("menu");root.innerHTML="";
+meals.forEach((m,i)=>{
+const box=document.createElement("div");box.className="card";
+const h=document.createElement("h3");h.textContent=m[0];box.append(h);
+["Breakfast","Lunch","Dinner","Snacks"].forEach((label,j)=>{
+const p=document.createElement("p");p.innerHTML="<strong>"+label+":</strong> ";
+p.append(document.createTextNode(m[j+1]));box.append(p);
+});
+root.append(box);
+});
+const prep=document.getElementById("prep");prep.innerHTML="";
+["Check meals against clinician/dietitian advice","Prepare foods safely and refrigerate promptly","Freeze portions intended for later in the week","Review reflux and IBS symptoms without assuming a trigger"].forEach((x,i)=>prep.append(checkboxRow(x,state["prep"+i],v=>{state["prep"+i]=v;persist()})));
+}
+function renderShopping(){
+const root=document.getElementById("shop");root.innerHTML="";
+Object.entries(shopping).forEach(([group,items])=>{
+const h=document.createElement("h3");h.textContent=group;root.append(h);
+items.forEach((x,i)=>{const k="shop-"+group+"-"+i;root.append(checkboxRow(x,state[k],v=>{state[k]=v;persist()}))});
+});
+}
+function renderWeights(){
+const root=document.getElementById("weights");root.innerHTML="";
+(state.weights||[]).slice().reverse().forEach(x=>{const p=document.createElement("p");p.textContent=x.date+" — "+x.value+" kg";root.append(p)});
+}
+document.getElementById("nav").addEventListener("click",e=>{
+const b=e.target.closest("button[data-tab]");if(!b)return;
+document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));
+document.querySelectorAll(".page").forEach(x=>x.classList.toggle("hidden",x.id!==b.dataset.tab));
+});
+document.getElementById("saveCheckin").onclick=()=>{
+const t=today();t.mood=document.getElementById("mood").value;t.pain=document.getElementById("pain").value;t.notes=document.getElementById("notes").value;persist();alert("Check-in saved on this device.");
+};
+document.getElementById("logWeight").onclick=()=>{
+const value=Number(document.getElementById("weight").value);
+if(!value||value<1||value>400){alert("Enter a valid weight in kg.");return}
+state.weights=state.weights||[];state.weights.push({date:dateKey(),value});persist();renderWeights();document.getElementById("weight").value="";
+};
+document.getElementById("week").onchange=e=>{state.week=Math.min(10,Math.max(1,Number(e.target.value)||1));e.target.value=state.week;persist()};
+document.getElementById("resetShop").onclick=()=>{
+Object.keys(state).filter(k=>k.startsWith("shop-")).forEach(k=>delete state[k]);persist();renderShopping();
+};
+document.getElementById("export").onclick=()=>{
+const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="wellbeing-backup.json";a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=async e=>{
+try{const imported=JSON.parse(await e.target.files[0].text());if(!imported||typeof imported!=="object"||Array.isArray(imported))throw Error();if(!confirm("Replace current app data with this backup?"))return;state=imported;persist();location.reload()}catch(err){alert("That backup file could not be read.")}
+};
+document.getElementById("resetAll").onclick=()=>{
+if(confirm("Delete all saved app data from this browser? Export a backup first if needed.")){localStorage.removeItem(KEY);location.reload()}
+};
+state.startDate=state.startDate||dateKey();state.week=state.week||1;persist();
+document.getElementById("week").value=state.week;
+const t=today();
+document.getElementById("mood").value=t.mood||"";
+document.getElementById("pain").value=t.pain||"";
+document.getElementById("notes").value=t.notes||"";
+renderDaily();renderModules();renderMeals();renderShopping();renderWeights();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
